@@ -3,11 +3,11 @@ from flask_cors import CORS
 import yt_dlp
 
 app = Flask(__name__)
-CORS(app)  # Blogger requests allow karne ke liye
+CORS(app)
 
 @app.route('/download', methods=['POST'])
 def get_download_link():
-    data = request.json
+    data = request.json or {}
     video_url = data.get('url')
     
     if not video_url:
@@ -29,6 +29,10 @@ def get_download_link():
             })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# Vercel Serverless Function Handle
+def handler(event, context):
+    return app(event, context)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
